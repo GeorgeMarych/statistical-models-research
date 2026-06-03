@@ -1,0 +1,108 @@
+# Modular strategy entry/exit combination lab.
+#
+# Entries emit signals using information available on the signal bar. The engine
+# fills entry and close-based exit signals on the next bar's open.
+
+symbols:
+  - AAPL
+  - MSFT
+  - SPY
+
+data:
+  source: cache_or_yfinance
+  cache_dir: data/raw
+
+start_date: "2018-01-01"
+end_date: null
+interval: "1d"
+periods_per_year: 252
+min_bars: 80
+
+mode: long_short
+initial_capital: 100000
+
+sizing:
+  mode: percent_equity
+  value: 0.95
+  fractional: true
+
+costs:
+  commission_per_trade: 0.0
+  commission_pct: 0.0
+  slippage_bps: 1.0
+  spread_bps: 2.0
+
+entries:
+  rsi_bb_mean_reversion:
+    enabled: true
+    module: rsi_bb_mean_reversion
+    parameters:
+      rsi_length: 14
+      rsi_threshold: 24.0
+      bb_window: 20
+      bb_stdev: 2.0
+      enable_short: false
+
+  donchian_breakout:
+    enabled: true
+    module: donchian_breakout
+    parameters:
+      lookback: 55
+      include_short_signals: true
+
+  ma_crossover:
+    enabled: true
+    module: ma_crossover
+    parameters:
+      fast_window: 20
+      slow_window: 50
+      ma_type: sma
+      include_short_signals: true
+
+exits:
+  fixed_bars_10:
+    enabled: true
+    module: fixed_bars
+    parameters:
+      max_bars: 10
+
+  opposite_signal:
+    enabled: true
+    module: opposite_signal
+    parameters:
+      reverse_on_opposite: true
+
+  middle_bollinger:
+    enabled: true
+    module: middle_bollinger
+    parameters:
+      bb_window: 20
+      bb_stdev: 2.0
+
+  upper_bollinger_touch:
+    enabled: true
+    module: upper_bollinger
+    parameters:
+      bb_window: 20
+      bb_stdev: 2.0
+      trigger: touch
+      touch_uses_previous_band: true
+
+  atr_stop_2_5:
+    enabled: true
+    module: atr_stop
+    parameters:
+      atr_length: 14
+      atr_multiple: 2.5
+      trailing: false
+
+  take_profit_stop_loss:
+    enabled: true
+    module: take_profit_stop_loss
+    parameters:
+      take_profit_pct: 0.08
+      stop_loss_pct: 0.04
+      atr_target_multiple: null
+      atr_stop_multiple: null
+
+output_path: data/results/current/strategy_combo_lab

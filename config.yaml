@@ -1,0 +1,144 @@
+tickers:
+  - "AAL"
+  - "ATOM"
+  - "BLZE"
+  - "AGNT"
+  - "ACIC"
+  - "PTE"
+  - "AMD"
+  - "CHI"
+  - "BOTZ"
+
+ticker_groups:
+  semis_ai:
+    - AMD
+  speculative_growth:
+    - ATOM
+    - BLZE
+    - ACIC
+    - AGNT
+  etfs:
+    - BOTZ
+    - CHI
+  cyclicals:
+    - AAL
+
+active_universe: sector_coverage_100
+
+universes:
+  sector_coverage_100:
+    technology:
+      etf: XLK
+      stocks: [AAPL, MSFT, NVDA, AMD, AVGO, ORCL, CRM, MU]
+
+    communication_services:
+      etf: XLC
+      stocks: [GOOGL, META, NFLX, DIS, TMUS, VZ, T, CMCSA]
+
+    consumer_discretionary:
+      etf: XLY
+      stocks: [AMZN, TSLA, HD, MCD, NKE, SBUX, BKNG, LOW]
+
+    consumer_staples:
+      etf: XLP
+      stocks: [COST, WMT, PG, KO, PEP, MDLZ, CL, KR]
+
+    energy:
+      etf: XLE
+      stocks: [XOM, CVX, COP, SLB, EOG, FANG, VIST, SM]
+
+    financials:
+      etf: XLF
+      stocks: [JPM, BAC, GS, MS, V, MA, BLK, SCHW]
+
+    healthcare:
+      etf: XLV
+      stocks: [LLY, UNH, JNJ, ABBV, MRK, TMO, ISRG, ABT]
+
+    industrials:
+      etf: XLI
+      stocks: [CAT, GE, RTX, LMT, DE, ETN, HON, UPS]
+
+    materials:
+      etf: XLB
+      stocks: [LIN, SHW, FCX, NEM, APD, ECL, NUE, DD]
+
+    real_estate:
+      etf: XLRE
+      stocks: [PLD, AMT, EQIX, WELL, SPG, O, DLR, CCI]
+
+    utilities:
+      etf: XLU
+      stocks: [NEE, SO, DUK, CEG, AEP, SRE, EXC, XEL]
+
+market_regime_universe:
+  core:
+    - SPY
+    - QQQ
+    - RSP
+    - IWM
+  breadth:
+    - MMFI
+    - MMTH
+    - HIGN
+    - LOWN
+  fear:
+    - VIX
+    - PCC
+  rates:
+    - US02Y
+    - US10Y
+    - T10Y2
+  macro:
+    - DXY
+    - GC1
+    - SI1
+    - HG1
+    - CL1
+  sectors:
+    - XLK
+    - XLC
+    - XLY
+    - XLF
+    - XLU
+    - XLE
+    - XLP
+    - XLV
+    - XLI
+    - XLB
+    - XLRE
+
+# Set to null to compute automatically from years_back
+start_date: null
+years_back: 10
+interval: "1d"
+
+# Legacy simple visible Markov model parameters.
+#
+# These parameters belong to the original bull/sideways/bear Markov signal
+# validation experiment. They should not be interpreted as final strategy
+# parameters. Future market regime, sector regime, stock state, HMM, and
+# simulation models should use separate config sections.
+state_lookback: 20
+bull_threshold_pct: 5.0
+bear_threshold_pct: 5.0
+
+# Legacy rolling transition window (number of bars)
+training_window: 500
+
+# Legacy signal threshold placeholder. The backtester is not implemented and
+# this should not be treated as a production entry parameter.
+signal_threshold_pct: 10.0
+
+# Forward return horizons to compute
+forward_return_days:
+  - 5
+  - 10
+  - 20
+
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  results_root: "data/results"
+  current_results_dir: "data/results/current"
+  legacy_results_dir: "data/results/legacy"
