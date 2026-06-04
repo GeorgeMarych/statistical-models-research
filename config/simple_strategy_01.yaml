@@ -1,0 +1,135 @@
+output_path: data/results/current/simple_strategy_01
+output:
+  organize_runs: true
+  clean_before_run: false
+  archive_old_root_outputs: true
+  copy_final_outputs_to_latest: true
+initial_capital: 100000
+start_date: "2010-01-01"
+end_date: "2099-12-31"
+interval: "1d"
+stage: stage_1_pine_parity
+
+data:
+  source: cache_or_yfinance
+  cache_dir: data/raw
+  start_date: "2010-01-01"
+  end_date: "2099-12-31"
+  interval: "1d"
+
+primary_symbol: CRWD
+peer_universe:
+  - CRWD
+  - PANW
+  - FTNT
+  - ZS
+  - NET
+  - S
+  - OKTA
+  - CYBR
+  - TENB
+  - VRNS
+  - RPD
+  - DDOG
+  - MDB
+  - TEAM
+  - SNOW
+  - PLTR
+  - APP
+  - NOW
+  - SHOP
+  - HUBS
+  - CFLT
+
+run:
+  run_baseline: true
+  run_peer_universe: false
+  run_cost_stress: false
+  run_monte_carlo_skip: false
+  run_trade_sequence_randomization: false
+  run_permutation_test: false
+  run_optimization: false
+
+strategy_parameters:
+  long_length: 2
+  short_length: 11
+  volume_avg_length: 10
+  avoid_wednesday_longs: true
+  enable_long_entries: true
+  enable_short_entries: true
+  use_opposite_signal_as_exit: true
+  if_side_disabled_use_signal_only_as_exit: true
+  trend_filter: false
+  trend_length: 200
+  market_regime_filter: false
+  market_symbol: QQQ
+  market_trend_length: 200
+  wide_bullish_filter: true
+  range_avg_length: 20
+  wide_range_mult: 1.0
+  fixed_bars_exit: true
+  exit_bars: 25
+  stop_loss_enabled: false
+  stop_loss_pct: 25
+  direction_mode: long_short
+  min_bars: 80
+
+sizing:
+  mode: percent_equity
+  percent_equity: 100
+  realistic_percent_equity_options: [10, 25, 50, 100]
+
+costs:
+  commission_percent: 0.03
+  slippage_bps_per_side: 0
+  stress_slippage_bps_per_side: [5, 10, 25]
+
+monte_carlo_skip:
+  skip_pct: [5, 10, 15, 20, 30, 50]
+  num_runs: 100
+  random_seed: 42
+
+trade_sequence_randomization:
+  num_runs: 1000
+  random_seed: 42
+
+permutation_test:
+  symbols: [CRWD, SHOP]
+  num_runs: 200
+  random_seed: 42
+  checkpoint_every: 25
+  progress_every: 25
+  final_validation_num_runs: 1000
+  final_validation_checkpoint_every: 50
+  final_validation_progress_every: 50
+  objective_metrics:
+    - final_equity
+    - total_return
+    - cagr
+    - profit_factor
+    - return_over_max_drawdown
+    - max_drawdown
+
+optimization:
+  optimization_mode: baseline_neighbors
+  max_parameter_combinations: 500
+  symbols_to_optimize: [CRWD, SHOP]
+  symbols: [CRWD, SHOP]
+  objective: balanced
+  top_n: 20
+  parameter_grid:
+    entry.long_extreme_signal.length: [2, 3, 4, 5]
+    entry.short_extreme_signal.length: [8, 11, 15, 20]
+    entry.volume_filter.length: [5, 10, 20]
+    filters.weekday_skip_wednesday.skip_days:
+      - ["Wednesday"]
+      - []
+    entry.short_filters.0.range_mult: [0.8, 1.0, 1.2]
+    exits.fixed_bars.bars: [15, 20, 25, 30, 40]
+    filters.trend_filter.enabled: [false, true]
+    filters.trend_filter.length: [100, 200]
+    exits.percent_stop_loss.enabled: [false, true]
+    exits.percent_stop_loss.stop_loss_pct: [20, 25, 30]
+
+direction_mode_comparison:
+  symbols: [CRWD, SHOP, PLTR, S]

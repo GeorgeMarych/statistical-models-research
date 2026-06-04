@@ -20,6 +20,8 @@ def _cagr(equity: pd.Series, dates: pd.Series | pd.Index) -> float:
     end_equity = float(equity.iloc[-1])
     if start_equity <= 0:
         return np.nan
+    if end_equity <= 0:
+        return -1.0
     dt_index = pd.to_datetime(pd.Index(dates))
     years = (dt_index[-1] - dt_index[0]).days / 365.25
     if years <= 0:

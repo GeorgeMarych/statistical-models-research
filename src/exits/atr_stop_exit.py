@@ -15,6 +15,7 @@ class ATRStopExit(BaseExit):
 
     atr_length: int = 14
     atr_multiple: float = 2.5
+    atr_mult: float | None = None
     atr_method: str = "wilder"
     trailing: bool = False
     label: str = "atr_stop"
@@ -27,10 +28,13 @@ class ATRStopExit(BaseExit):
     def parameters(self) -> dict:
         return {
             "atr_length": self.atr_length,
-            "atr_multiple": self.atr_multiple,
+            "atr_multiple": self._active_multiple(),
             "atr_method": self.atr_method,
             "trailing": self.trailing,
         }
+
+    def _active_multiple(self) -> float:
+        return self.atr_mult if self.atr_mult is not None else self.atr_multiple
 
     def prepare(
         self,
@@ -62,21 +66,23 @@ class ATRStopExit(BaseExit):
             return ExitDecision.no_action()
 
         if position.side == 1:
-            stop_price = position.entry_price - self.atr_multiple * atr
+            multiple = self._active_multiple()
+            stop_price = position.entry_price - multiple * atr
             if self.trailing:
                 high_since_entry = data["high"].iloc[position.entry_index : index + 1].max()
                 prev_atr = prepared["atr"].iloc[max(index - 1, atr_index)]
                 if pd.notna(prev_atr) and prev_atr > 0:
-                    stop_price = max(stop_price, high_since_entry - self.atr_multiple * prev_atr)
+                    stop_price = max(stop_price, high_since_entry - multiple * prev_atr)
             if data["low"].iloc[index] <= stop_price:
                 return ExitDecision(True, "atr_stop", "intrabar", float(stop_price))
         else:
-            stop_price = position.entry_price + self.atr_multiple * atr
+            multiple = self._active_multiple()
+            stop_price = position.entry_price + multiple * atr
             if self.trailing:
                 low_since_entry = data["low"].iloc[position.entry_index : index + 1].min()
                 prev_atr = prepared["atr"].iloc[max(index - 1, atr_index)]
                 if pd.notna(prev_atr) and prev_atr > 0:
-                    stop_price = min(stop_price, low_since_entry + self.atr_multiple * prev_atr)
+                    stop_price = min(stop_price, low_since_entry + multiple * prev_atr)
             if data["high"].iloc[index] >= stop_price:
                 return ExitDecision(True, "atr_stop", "intrabar", float(stop_price))
 

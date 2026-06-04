@@ -7,6 +7,7 @@ from src.backtesting.engine import (
     find_future_columns,
     prepare_ohlcv,
 )
+from src.backtesting.exit_stack import ExitStack
 from src.backtesting.portfolio import Position, PositionSizing
 
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     "BacktestResult",
     "BacktestSettings",
     "TradingCosts",
+    "ExitStack",
     "Position",
     "PositionSizing",
     "find_future_columns",

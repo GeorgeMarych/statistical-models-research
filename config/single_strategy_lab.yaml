@@ -1,0 +1,84 @@
+# Single modular strategy lab.
+
+data:
+  source: cache_only
+  cache_dir: data/raw
+
+start_date: "2018-01-01"
+end_date: null
+interval: "1d"
+periods_per_year: 252
+min_bars: 250
+
+strategy:
+  name: breakout_etf_strategy
+  symbols:
+    - SPY
+    - QQQ
+    - IWM
+    - DIA
+    - XLK
+    - XLF
+    - XLE
+    - XLI
+    - XLU
+    - XLV
+    - XLY
+    - XLP
+    - GLD
+    - SLV
+    - USO
+    - UNG
+    - DBA
+    - CPER
+    - TLT
+    - HYG
+
+  direction_mode: long_only
+  filter_mode: all
+  initial_capital: 100000
+  periods_per_year: 252
+  min_bars: 250
+
+  sizing:
+    mode: percent_equity
+    value: 0.95
+    fractional: true
+
+  costs:
+    commission_per_share: 0.005
+    min_commission_per_order: 1.00
+    slippage_bps_per_side: 3.0
+    commission_per_trade: 0.0
+    commission_pct: 0.0
+    spread_bps: 0.0
+
+  entry:
+    module: close_breakout
+    label: close_breakout
+    parameters:
+      length: 20
+      include_short_signals: false
+
+  filters:
+    - module: trend_filter
+      label: trend_200
+      parameters:
+        length: 200
+        ma_type: sma
+        mode: long_above_sma
+
+  exit_stack_name: atr_stop_plus_fixed_bars
+  exit_stack:
+    - module: atr_stop
+      label: atr_stop
+      parameters:
+        atr_length: 14
+        atr_multiple: 3.0
+        trailing: false
+    - module: fixed_bars
+      label: fixed_bars
+      parameters:
+        bars: 10
+
+output_path: data/results/current/single_strategy_lab/breakout_etf_strategy

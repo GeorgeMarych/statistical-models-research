@@ -314,7 +314,7 @@ class BacktestEngine:
             return None, cash
 
         notional = fill_price * quantity
-        commission = self.settings.costs.commission(notional)
+        commission = self.settings.costs.commission(notional, quantity)
         if side == 1:
             cash -= notional + commission
         else:
@@ -349,7 +349,7 @@ class BacktestEngine:
         order_side = -1 if position.side == 1 else 1
         fill_price = self.settings.costs.price_with_costs(raw_price, order_side)
         notional = fill_price * position.quantity
-        exit_commission = self.settings.costs.commission(notional)
+        exit_commission = self.settings.costs.commission(notional, position.quantity)
 
         if position.side == 1:
             cash += notional - exit_commission
